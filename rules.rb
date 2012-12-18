@@ -6,21 +6,17 @@
 #
 # * Run `maid help`
 # * Read the README, tutorial, and documentation at https://github.com/benjaminoakes/maid#maid
-# * Ask me a question over email (hello@benjaminoakes.com) or Twitter (@benjaminoakes)
 
 Maid.rules do
-  # **NOTE:** It's recommended you just use this as a template; if you run these rules on your machine without knowing
-  # what they do, you might run into unwanted results!
-
-  rule 'Linux ISOs, etc' do
+  rule 'Delete Downloaded ISOs' do
     trash(dir('~/Downloads/*.iso'))
   end
 
-  rule 'Mac OS X applications in disk images' do
+  rule 'Delete Mac OS X applications in disk images' do
     trash(dir('~/Downloads/*.dmg'))
   end
 
-  rule 'Mac OS X applications in zip files' do
+  rule 'Delete Mac OS X applications in zip files' do
     found = dir('~/Downloads/*.zip').select { |path|
       zipfile_contents(path).any? { |c| c.match(/\.app$/) }
     }
@@ -28,7 +24,7 @@ Maid.rules do
     trash(found)
   end
 
-  rule 'Misc Screenshots' do
+  rule 'Delete Misc Screenshots' do
     dir('~/Desktop/Screen Shot *').each do |path|
       if 3.days.since?(accessed_at(path))
         trash(path)
@@ -36,12 +32,23 @@ Maid.rules do
     end
   end
 
-  # NOTE: Currently, only Mac OS X supports `duration_s`.
-  rule 'MP3s likely to be music' do
+  rule 'Move MP3s likely to be music' do
     dir('~/Downloads/*.mp3').each do |path|
       if duration_s(path) > 30.0
-        move(path, '~/Music/iTunes/iTunes Media/Automatically Add to iTunes/')
+        move(path, '~/Dropbox/Music/')
       end
+    end
+  end
+  
+  rule 'Move Videos to Movies folder' do
+    dir('~/Downloads/*.mp4').each do |path|
+      move(path, '~/Desktop/Movies/')
+    end
+  end
+  
+  rule 'Move Videos to Movies folder' do
+    dir('~/Downloads/*.mpg').each do |path|
+      move(path, '~/Desktop/Movies/')
     end
   end
   
