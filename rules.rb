@@ -7,6 +7,9 @@
 # * Run `maid help`
 # * Read the README, tutorial, and documentation at https://github.com/benjaminoakes/maid#maid
 
+require Dir.pwd + '/webloc.rb'
+require Dir.pwd + '/bookmark.rb'
+
 Maid.rules do
   rule 'Delete Downloaded ISOs' do
     trash(dir('~/Downloads/*.iso'))
@@ -71,9 +74,15 @@ Maid.rules do
     trash(dir('~/Downloads/*.1'))
   end
   
-  # rule "Bookmark links on Desktop" do
-  # 
-  #   end
+  rule "Bookmark links on Desktop" do
+    dir('~/Desktop/*.webloc').each do |link|
+      if accessed_at(link) > 3.days.ago
+        w = Webloc.new(link)
+        Bookmark.save(w.url, w.title)
+        trash(link)
+      end
+    end
+  end
 
   # # NOTE: Currently, only Mac OS X supports `downloaded_from`.
   # rule 'Old files downloaded while developing/testing' do
