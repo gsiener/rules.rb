@@ -78,8 +78,7 @@ Maid.rules do
     dir('~/Desktop/*.webloc').each do |link|
       if accessed_at(link) > 3.days.ago
         w = Webloc.new(link)
-        Bookmark.save(w.url, w.title)
-        trash(link)
+        trash(link) if Bookmark.save(w.url, w.title)
       end
     end
   end
